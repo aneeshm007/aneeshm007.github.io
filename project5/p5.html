@@ -1,0 +1,433 @@
+<html>
+
+<title> Image Compression</title>
+<a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style5.css">
+</head>
+<script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	
+<body>
+
+<h1> Image Compression</h1>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = #intro>Introduction</a>
+<li class = "links"> <a href = #part1>Part 1</a>
+<li class = "links"> <a href = #part2>Part 2</a>
+<li class = "links"> <a href = #part3>Part 3</a>
+</ul>
+</div>
+<hr color>
+
+
+<div>
+<a NAME = "intro">
+<h2> Introduction </h2> 
+</div>
+
+<div>
+<p> Image compression is the process of removing high-noise signals from a matrix of 
+RGB color values. In order to do this, we use a discrete cosine transform, which converts
+an 8 x 8 block of pixels into its frequency components. This is done by defining a DCT matrix:
+
+$$ C_{ij} = \frac{\sqrt{2}}{\sqrt{n}}a_icos\frac{i(2j + 1)\pi}{2n},$$
+
+where \(a_i = \frac{1}{\sqrt{2}}\) if \(i = 0\) or \(a_i = 1\) if  \(1 \leq i \leq  n-1\). The \(C\) 
+matrix comes from a least squares approximation of our data points. The discrete cosine transform
+of a two-dimensional matrix of pixels \(X\) is \(Y = CXC^T\). Since \(C\) is orthonormal,
+\(C^{-1} = C^T\), so the inverse discrete cosine transform is \(X = C^TYC\). Upon transforming our 
+original image, we use the standard JPEG quantization matrix:
+$$
+Q_c = p
+   \begin{bmatrix} 
+    16 & 11 & 10 & 16 & 24 & 40 & 51 & 61 \\
+    12 & 12 & 14 & 19 & 26 & 58 & 60 & 55 \\
+    14 & 13 & 16 & 24 & 40 & 57 & 69 & 56 \\
+    14 & 17 & 22 & 29 & 51 & 87 & 80 & 62 \\
+    18 & 22 & 37 & 56 & 68 & 109 & 103 & 77 \\
+    24 & 35 & 55 & 64 & 81 & 104 & 113 & 92 \\
+    49 & 64 & 78 & 87 & 103 & 121 & 120 & 101 \\
+    72 & 92 & 85 & 98 & 112 & 100 & 103 & 99 \\
+    \end{bmatrix}
+    $$
+Since Y tells us the strength of the signal
+at each point in the 8x8 block, dividing Y by Q element-wise and rounding to the nearest integer
+ will swamp out all components
+whose magnitudes \(Y_{ij}\) are below a certain range: \(\frac{1}{2}Q_{ij}\). The loss parameter
+\(p\) scales the matrix to either increase or decrease this rounding error. Storing this 
+\(Y\) matrix in memory is far more efficient since many of the components of the matrix will be zero.
+We can retrieve our original \(X\) with low RMSE (due to the least-squares approximation) by
+using the inverse DCT.</p>
+</div>
+<p> Here we compress the following 858 x 536 image in black and white and in color</p>
+<br>
+<div align = "center"><img src = "compress.png"></div>
+<hr color>
+
+<h2> Black and White Compression </h2>
+<a NAME = "part1">
+<div style = "background-color: #efefd3;  margin-right: auto;  margin-left: auto; text-align: center; width: 700px; height: 35px">
+<ul class = "links"> 
+<li class = "links"> <a href = "dct.m">Discrete Cosine Transform</a></li>
+<li class = "links"> <a href = "quant.m">Quantization</a></li>
+<li class = "links"> <a href = "dequant.m">Dequantization</a></li>
+<li class = "links"> <a href = "imagecomp.m">Compression Code</a></li>
+<li class = "links"> <a href = "imagerunner.m">Black and White Runner</a></li>
+
+</ul>
+</div>
+
+<br>
+<p> We began by compressing an arbitrary 8x8 block, starting at (400,450). Both the linear
+and JPEG quantization matrices were used. The code was modified to only compress and return 
+	the matrix of a single 8x8 block rather than the whole image. We then found the 
+	\(Y_Q\) matrix and the compressed block for \(p = 1,2,4,8,16\).	
+<br>
+
+<p> The uncompressed 8x8 blocks is shown below:</p>
+<center><img src = "bworiginal.jpg" height = 500 width = 550></center>
+<p> This true pixel values for this block (rounded to the nearest integer) is given by:
+$$
+X = 
+   \begin{bmatrix} 
+    115 & 115 & 119 & 113 & 118 & 97 & 66 & 57 \\
+    115 & 115 & 120 & 111 & 112 & 91 & 61 & 62 \\
+    113 & 116 & 113 & 110 & 115 & 84 & 62 & 70 \\
+    111 & 120 & 112 & 113 & 113 & 73 & 67 & 73 \\
+    111 & 118 & 112 & 113 & 95 & 59 & 73 & 72 \\
+    113 & 114 & 112 & 105 & 69 & 46 & 71 & 73 \\
+    115 & 115 & 116 & 102 & 58 & 43 & 63 & 73 \\
+    116 & 117 & 107 & 93 & 61 & 52 & 59 & 73 \\
+    \end{bmatrix}
+    $$
+<br>
+<h2> Linear Quantization Matrix</h2>
+<div align = center>
+<table>
+<tr>
+<th> \(Y_Q\)</th>
+<th> Result Image </th>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_1} = 
+   \begin{bmatrix} 
+    -35 & 10 & -1 & -1 & 0 & 0 & 0 & 0 \\
+    3 & 0 & -2 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed1.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_2} = 
+   \begin{bmatrix} 
+    -17 & 5 & 0 & -1 & 0 & 0 & 0 & 0 \\
+    1 & 0 & -1 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed2.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_4} = 
+
+   \begin{bmatrix} 
+    -9 & 3 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed4.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_8} = 
+   \begin{bmatrix} 
+    -4 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed8.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_{16}} = 
+   \begin{bmatrix} 
+   -2 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+<td><img src = "bwcompressed16.jpg" height = 450 width = 500></td>
+</tr>
+
+</table> 
+</div>
+
+<br><br>
+<h2> JPEG Quantization Matrix</h2>
+
+<div align = center>
+<table>
+<tr>
+<th> \(Y_Q\)</th>
+<th> Result Image </th>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_1} = 
+   \begin{bmatrix} 
+    -17 & 15 & -2 & -2 & 1 & 0 & 0 & 0 \\
+    4 & -1 & -4 & 2 & 0 & 0 & 0 & 0 \\
+    -1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwjpg1.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_2} = 
+   \begin{bmatrix} 
+    -9 & 7 & -1 & -1 & 0 & 0 & 0 & 0 \\
+    2 & 0 & -2 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwjpg2.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_4} = 
+
+   \begin{bmatrix} 
+    -4 & 4 & -1 & -1 & 0 & 0 & 0 & 0 \\
+    1 & 0 & -1 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed4.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_8} = 
+   \begin{bmatrix} 
+    -2 & 2 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+</td>
+<td><img src = "bwcompressed8.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td class = "equation">
+$$
+Y_{Q_{16}} = 
+   \begin{bmatrix} 
+    -1 & 1 & 0 & -1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \end{bmatrix}
+    $$
+<td><img src = "bwcompressed16.jpg" height = 450 width = 500></td>
+</tr>
+
+</table> 
+</div>
+
+
+<p> There are very subtle differences between the blocks when using the two quantization methods.
+In order to determine which of the methods is better for this image, we compare the complete compressed images.
+The original black and white image is shown below, along with a table comparing compression using 
+linear and JPEG quantization matrices.</p>
+
+<br>
+
+<center><img src = "ogbw.jpg" height = 450 width = 550></center>
+<div align = center>
+<table>
+<tr>
+<th> Linear Quantization</th>
+<th> JPEG Quantization </th>
+</tr>
+<tr>
+<td><img src = "linear1.jpg" height = 450 width = 500></td>
+<td><img src = "jpg1.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td><img src = "linear2.jpg" height = 450 width = 500></td>
+<td><img src = "jpg2.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td><img src = "linear4.jpg" height = 450 width = 500></td>
+<td><img src = "jpg4.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td><img src = "linear8.jpg" height = 450 width = 500></td>
+<td><img src = "jpg8.jpg" height = 450 width = 500></td>
+</tr>
+<tr>
+<td><img src = "linear16.jpg" height = 450 width = 500></td>
+<td><img src = "jpg16.jpg" height = 450 width = 500></td>
+</tr>
+
+</table> 
+</div>
+
+<p> As we can see, the linear quantization matrix returns slightly better images,
+especially at higher \(p\) values compared to the JPEG quantization matrix. This is surprising 
+as we expect the JPEG matrix to yield better results in most cases. </p>
+<hr color>
+<h2> Color Images </h2>
+<a NAME = "part2">
+<div style = "background-color: #efefd3;  margin-right: auto;  margin-left: auto; text-align: center; width: 150px; height: 35px">
+<ul class = "links"> 
+<li class = "links"> <a href = "colorunner.m">Color Runner Code</a></li>
+</ul>
+</div>
+
+<p>
+In this section, we essentially run our compression code three times, for the R, G, and B
+matrices respectively, then combine them to obtain a final compressed color image. Only the
+linear quantization matrix was used in this case. The video below shows how increments in \(p\) can 
+slowly reduce image quality for \(p\) between 1 and 200:</p>
+
+<center>
+<iframe width="480" height="360" src="https://www.youtube.com/embed/T_K2OR47lYs" frameborder="0" allowfullscreen></iframe>
+</video>
+</center>
+
+<p>We can also see the effect of compression on a single 8x8 block. Using the same block as before:</p>
+
+<center><img src = "cblockog.jpg" height = 450 width = 550"></center>
+
+<div class = "images">
+
+<img src = "cblock1.jpg" height = 450 width = 500> <img src = "cblock2.jpg" height = 450 width = 500>
+<img src = "cblock4.jpg" height = 450 width = 500><img src = "cblock8.jpg" height = 450 width = 500>
+<img src = "cblock16.jpg" height = 450 width = 500><img src = "cblock32.jpg" height = 450 width = 500>
+
+</div>
+<p> The below video demonstrates the deviation in colors in the block as we increase our loss parameter,
+eventually leading to only gray.
+<center>
+<iframe width="480" height="360" src="https://www.youtube.com/embed/dtMHcpAb5WA" frameborder="0" allowfullscreen></iframe>
+</video>
+</center>
+
+<p> For a high resolution image (6000 x 4000), a cartoon effect can be seen for values of \(p = 16\)</p>
+<center>
+<img src = "cartoon.jpg" height = 450 width = 500>
+</center>
+<hr color>
+
+
+<h2> YUV Compression </h2>
+<div style = "background-color: #efefd3;  margin-right: auto;  margin-left: auto; text-align: center; width: 200px; height: 35px">
+<ul class = "links"> 
+<li class = "links"> <a href = "yuv.m">YUV Runner Code</a></li>
+
+
+</ul>
+</div>
+<a NAME = "part3">
+<p> In this section, we explore another compression method known as YUV compression,
+where we define the Luminescence $$Y = 0.299R + 0.587G + 0.114B$$, and the color differences 
+$$ U = B - Y \\ V = R - Y$$. We can compress any image in the YUV color system and convert back RGB as well.
+This method handles colors more delicately than the standard JPEG method. </p>
+
+<p> The following YUV compressed images were obtained </p>
+<div class = "images">
+
+<img src = "yuv1.jpg" height = 450 width = 500> <img src = "yuv2.jpg" height = 450 width = 500>
+<img src = "yuv4.jpg" height = 450 width = 500><img src = "yuv8.jpg" height = 450 width = 500>
+<img src = "yuv16.jpg" height = 450 width = 500><img src = "yuv300.jpg" height = 450 width = 500>
+<img src = "yuv350.jpg" height = 450 width = 500><img src = "yuv500.jpg" height = 450 width = 500
+
+</div>
+
+<p> Below is the video for values of \(p\) between \(1\) and \(100\)
+<center>
+<iframe width="480" height="360" src="https://www.youtube.com/embed/QBxyzWxyGhU" frameborder="0" allowfullscreen></iframe>
+</video>
+</center>
+
+
+
+</body>
+
+
+</html>

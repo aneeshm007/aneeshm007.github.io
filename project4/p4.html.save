@@ -1,0 +1,50 @@
+<html>
+
+<title>PDE Modeling of the Brusselator</title>
+<a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style4.css">
+</head>
+<script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	
+
+
+<h1> Brusselator</h1>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = #intro>Introduction</a>
+<li class = "links"> <a href = #part1>Part 1</a>
+<li class = "links"> <a href = #part2>Part 2</a>
+<li class = "links"> <a href = #part3>Part 3</a>
+</ul>
+</div>
+<hr color>
+<a name= "intro">
+<h2>Introduction to the Brusselator</h2>
+<p> Alan Turing's 1952 paper <a href = "http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf"> The Chemical Basis for Morphogenesis</a>
+	describes the origins of skin pigmentations due to unstable reactions of chemical substances called "morphogens", which diffuse along a concentration 
+	gradient in skin and react together. Turing modeled these reactions and found they produce patterns commonly found in nature, such as the spots and stripes on animals.
+	Here we model these unstable reaction-diffusion equations in the Brusselator model in order to see these patterns.
+<br> This model is given by	the following equations using homogeneous Neumann boundary conditions.
+	\begin{align}
+	p_t = D_p\nabla^2 p + p^2q + C - (K+1)p \\
+	q_t = D_p\nabla^2 q - p^2q + Kp\\
+	
+	p(x,y,0) = C + 0.1 \\
+	q(x,y,0) = \frac{K}{C} + 0.2 
+	\end{align}</p>
+	
+	
+<a name = "part1>
+<h2> Pattern Formations</p>
+
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = #intro>Code</a>
+
+
+</ul>
+</div>
+

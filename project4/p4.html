@@ -1,0 +1,241 @@
+<html>
+
+<title>PDE Modeling of the Brusselator</title>
+<a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style4.css">
+</head>
+<script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	
+
+
+<h1> Brusselator</h1>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = #intro>Introduction</a>
+<li class = "links"> <a href = #part1>Part 1</a>
+<li class = "links"> <a href = #part2>Part 2</a>
+<li class = "links"> <a href = #part3>Part 3</a>
+</ul>
+</div>
+<hr color>
+<a name= "intro">
+<h2>Introduction to the Brusselator</h2>
+<p> Alan Turing's 1952 paper <a href = "http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf"> The Chemical Basis for Morphogenesis</a>
+	describes the origins of skin pigmentations due to unstable reactions of chemical substances called "morphogens", which diffuse along a concentration 
+	gradient in skin and react together. Turing modeled these reactions and found they produce patterns commonly found in nature, such as the spots and stripes on animals.
+	Here we model these unstable reaction-diffusion equations in the Brusselator model on the grid \([0,40] x [0,40]\) in order to see these patterns. 
+<br> This model is given by	the following equations using homogeneous Neumann boundary conditions.
+	\begin{align}
+	p_t = D_p\nabla^2 p + p^2q + C - (K+1)p \\
+	q_t = D_p\nabla^2 q - p^2q + Kp\\
+	
+	p(x,y,0) = C + 0.1 \\
+	q(x,y,0) = \frac{K}{C} + 0.2 
+	\end{align}</p>
+<p>
+We expect to see turing instability when $$ K > (1 + C\sqrt{\frac{D_p}{D_q}})^2$$ 
+</p>
+<hr color>
+<a name = "part1">
+<h2> Pattern Formations</h2>
+
+
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = "brusselator815.m"> Code to Reproduce Images </a>
+</ul>
+</div>
+
+<div>
+<p>
+We began by reproducing contour plots for solutions of \(p(x,y)\) at \(t = 2000\) using paramters \(D_p = 1, D_q = 8, C = 4.5,\) and with \(K\) between 7 and 12.
+</p>
+</div>
+
+
+
+<center>
+
+<table>
+
+<tr>
+
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/446M_IZXN98" frameborder="0" allowfullscreen></iframe>
+<h4> K = 7 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/OQGo1IIaaaU" frameborder="0" allowfullscreen></iframe>
+<h4> K = 8 </h4>
+</td>
+</tr>
+
+<tr>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/HGvBfZK87Wo" frameborder="0" allowfullscreen></iframe>
+<h4> K = 9 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/3TwFl6XsRkQ" frameborder="0" allowfullscreen></iframe>
+<h4> K = 10 </h4>
+</td>
+</tr>
+
+<tr>
+
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/BCOSU555M-g" frameborder="0" allowfullscreen></iframe>
+<h4> K = 11 </h4>
+</td>
+
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/-CaCwwKyMVA" frameborder="0" allowfullscreen></iframe>
+<h4> K = 12 </h4>
+</td>
+</tr>
+
+</table>
+</center>
+
+<p> As we can see, the solutions for these equations produce very animal-like shapes and patterns. </p>
+
+<hr color>
+
+<a name = "part2">
+<h2> Veryifying Equilibrium Solutions </h2>
+<p> Next we will prove that \(p = c\) and \(q = \frac{K}{C}\) are equilibrium solutions for the equations described in the introduction.
+We note that \(\nabla^2 p = \nabla^2 q = 0\) since \(p\) and \(q\) are constants. Therefore, we will show
+\begin{align}
+
+0 = p^2q + C - (K+1)p\\
+0 = -p^2q + Kp \\
+\end{align}
+
+If we substitute \(p = c\) and \(q = \frac{K}{C}\), we obtain
+\begin{align}
+
+0 = C^2(\frac{K}{C}) + C - (K+1) C \\
+0 = -C^2*(\frac{K}{C}) + KC \\
+
+\end{align}
+
+We see that 
+
+$$ CK + C - KC - C = 0$$
+
+and 
+$$ CK + KC = 0$$.
+
+Therefore we conclude \(p = c\) and \(q = \frac{K}{C}\) are equilibrium solutions. 
+
+
+<hr color>
+
+<a name = "part3">
+
+<h2> K Values </h2>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = "brusselator.m"> Code to Reproduce Images </a>
+</ul>
+</div>
+<p> In this section we varied the intial conditions of the brusselator such that \(p(x,y,0) = 1 + cos(\pi x)cos(\pi y)\) and \(q(x,y,0) = cos(2\pi x)cos(2\pi y)\). The time step used in the 
+backwards difference method was \(t = 1\). The parameters we used were \(D_p = 1, D_q  = 8, C = 4.5\) with an expected instability point when \(K > 6.73\). We began using values of K between 4 and 6.5
+in order to demonstrate the stable solutions that arise. 
+
+
+<center>
+
+<table>
+
+<tr>
+
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/FPiytetxm_Y" frameborder="0" allowfullscreen></iframe>
+<h4> K = 4 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/_QOAsZjjZHQ" frameborder="0" allowfullscreen></iframe>
+<h4> K = 5 </h4>
+</td>
+</tr>
+
+<tr>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/B4OBGA3dyf8" frameborder="0" allowfullscreen></iframe>
+<h4> K = 6 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/0iKK94pEywM" frameborder="0" allowfullscreen></iframe>
+<h4> K = 6.5 </h4>
+</td>
+</tr>
+
+<tr>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/6H6LRUowyak" frameborder="0" allowfullscreen></iframe>
+<h4> K = 6.713 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/qiNUs59eAP8" frameborder="0" allowfullscreen></iframe>
+<h4> K = 6.714 </h4>
+</td>
+</tr>
+
+</table>
+</center>
+
+
+<p> We then chose larger values of K to be above the turing instability point using the same initial conditions.</p>
+
+<center>
+
+<table>
+
+<tr>
+
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/LnX4iIrpCkM" frameborder="0" allowfullscreen></iframe>
+<h4> K = 7.2 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/gagaa8x54NA" frameborder="0" allowfullscreen></iframe>
+<h4> K = 7.4 </h4>
+</td>
+</tr>
+
+<tr>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/B4OBGA3dyf8" frameborder="0" allowfullscreen></iframe>
+<h4> K = 7.6 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/ZvsZ15WrJqM" frameborder="0" allowfullscreen></iframe>
+<h4> K = 7.8 </h4>
+</td>
+</tr>
+
+<tr>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/ESsME_M5B_4" frameborder="0" allowfullscreen></iframe>
+<h4> K = 100 </h4>
+</td>
+<td class = "video">
+<iframe width="420" height="315" src="https://www.youtube.com/embed/jRPKNgrsv54" frameborder="0" allowfullscreen></iframe>
+<h4> K = 300 </h4>
+</td>
+</tr>
+
+
+
+</table>
+</center>
+
+<p> For very high values of \(K\), we see artifacts of Turing instability in the contour plots, whereas using values closer to the equilibrium 
+point produced instability along a larger grid-size. This may also due to the smaller sample of frames used for the videos using the higher K values. We conclude that Turing 
+Instability can be seen for values of \(K\) above the theoretical point, and highly mimic patterns seen in nature.
+
+

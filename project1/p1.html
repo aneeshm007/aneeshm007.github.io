@@ -1,0 +1,255 @@
+<html>
+<title> Kinematics of a Stewart Platform</title>
+<a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style1.css">
+ </head>
+ <h1> Project 1</h1> 
+ <hr>
+ <script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+ 
+<body>
+
+<div align = center>
+
+<center><h2> Introduction </h2><center>
+
+
+
+<p>The stewart platform is a three dimensional platform with 6 degrees of freedom, or rather 6 strut lengths which control the orientations
+of the platform. In this project, we explore a two-dimensional analog: a triangular platform controlled by 3 struts,
+which are anchored to three points (\(0,0), (x_1,0)\), and  (\(x_2,y_2)\)</p>
+
+<center><img src = "intro.png" height = 300 width = 400></center>
+
+<p> In this project, we examined the geometry of the 2D Stewart Platform in order to solve its forward kinematics, or rather the orientation of our platform given the individual strut lengths, and \(\gamma\). Our Matlab code 
+creates a function in terms of a single variable \(\theta\), whose zeros correspond to different orientaions of the triangle.
+<p> From simple trigonometry, we obtain that $$ p_1^2 = x^2 + y^2 $$ $$p_2^2 = (x+ A_2)^2 + (y+ B_2)^2$$ 
+$$ p_3^2 = (x+A_3)^2 + (y+B_3)^2$$ 
+</p>
+<p>where</p>
+<p>
+$$A_2 = L_3cos(\theta) - x_1 $$
+$$B_2 = L_3sin(\theta)$$
+$$A_3 = L_2cos(\theta + \gamma) - x_2 $$
+$$B_3 = L_2sin(\theta +\gamma) - y_2$$
+</p>
+
+<p> These equations provide a solution to the inverse kinematics problem. Given an angle \(\theta\), and position \((x,y)\), we can calculate the corresponding strut lengths for the platform. The 
+forward kinematics problem, however, is more complex</p> 
+<p> We can solve the forward kinematics by eliminating \(x\) and \(y\).</p>
+<p> We set $$ x = \frac{N_1}{D} = \frac{B_3(p_2^2 - p_1^2 - A_)2^2 - B_2^2) - B_2(p_3^2 - p_1^2 - A_3^2 - B_3^2)}{2(A_2B_3 - B_2A_3)}$$
+	$$ y = \frac{N_2}{D} = \frac{-A_3(p_2^2 - p_1^2 - A_2^2 - B_2^2) + A_2(p_3^2 - p_1^2 - A_3^2 - B_3^2)}{2(A_2B_3 - B_2A_3)}$$
+</p>
+
+<p>
+
+Substituting back into the first equation, we get a single equation in the variable \(\theta\),
+$$f = N_1^2 + N_2^2 - p_1^2D^2 = 0. $$
+
+
+</div>
+
+
+<div align = left>
+
+<hr color>
+
+
+<h2> Part II: Graph of \(f(\theta)\) </h2>
+
+
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = "f.m">Link to Matlab Code for Part II</a> 
+
+</ul>
+</div>
+
+
+<p> 
+Our Matlab code creates the function described in the introduction for a given set of parameters.
+We began by plotting \(f(\theta)\) for a given set of sample values of parameters in order to test our function
+ \(L_1,L_2, L_3, p_1, p_2,p_3, \gamma\), with a set of anchoring points 
+ \(\{(0,0), (4,0),(0,4)\}\).<br><br><br>
+
+<p> The parameter test values were as follows:
+
+\(L_1 = 2\)
+\(L_2 = L_3 = \sqrt2\)<br>
+\(p_1 = p_2 = p_3 = \sqrt2\) <br>
+\(\gamma = \frac{\pi}{2}\) 
+</p>
+
+<center>
+<img src = "figurepart2.jpg" class = "big">
+</center>
+
+
+
+
+
+
+<p> This function's zeros for the given parameters are truly at
+ \(\frac{\pi}{4}\) and \(\frac{-\pi}{4}\). Upon calculating \(f(\theta)\) for
+ these values we obtain the same backward error of \(-2.273 * 10^{-13}\). This is small
+ enough a value to accept these values as the true zeros.
+</td>
+</tr>
+
+
+
+
+<hr color>
+
+<h2> Part III </h2>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = "bisection.m">Bisection Method</a> 
+</ul>
+</div>
+
+<p>
+The graph in the previous section had two zeroes, each of which corresponds to a pose in the two-dimensional Stewart Platform. 
+The pose corresponding to the root \(\theta = \frac{\pi}{4}\) returned, as expected, a coordinate of \((x,y) = (2,1)\) while  \(\theta = -\frac{\pi}{4}\)
+returned \((x,y) = (1,2)\). The plots of each orientations were obtained by manually plotting the vectors in Matlab after solving for \(\theta\)
+These plots are shown below:</p>
+
+<div style = "height:780; width: 500;">
+
+<center>
+<img src = "figure1part3.png"> <br>
+
+<img src = "figure2part3.png">
+
+</center>
+</div>
+
+<hr color>
+
+<h2> Part IV</h2>
+
+<p> We now construct poses for the Stewart Platform specified by \(x_1 = 5\), \((x_2,y_2) = (0,6)\), \(L_1 = L_3 = 3\), \(L_2 = 3\sqrt{2}\),
+\(\gamma = \frac{\pi}{4}\), \(p_1 = p_2 =5\), and \(p = 3\). </p>
+
+<center>
+ <table border="1" style="width:50%">
+	 <tr>
+		<th>\(\theta\)</th>
+		<th>\(X\)</th>
+		<th>\(Y\)</th>
+		<th>Plot</th>
+	</tr>
+		<th>2.1159</th>
+		<th>4.5718</th>
+		<th>2.0244</th>
+		<th><img width=560 src="figure1part4"></th>
+	</tr>
+	<tr>
+		<th>-0.7208</th>
+		<th>-1.3784</th>
+		<th>4.8063</th>
+		<th><img width=560 src="figure2part4"></th>
+	</tr>
+	<tr>
+		<th>-0.3310</th>
+		<th>-0.9147</th>
+		<th>4.9156</th>
+		<th><img width=560 src="figure3part4"></th>
+	</tr>
+	<tr>
+		<th>1.1437</th>
+		<th>4.4818</th>
+		<th>2.2167</th>
+		<th><img width=560 src="figure4part4"></th>
+	</tr>
+</table>
+</center>
+<br><br>
+<hr color>
+
+<h2> Part V </h2>
+<p> We repeat the process in part 4 but we must change the second strut length, p2, 
+so that we wind up with 6 poses instead of 4. We chose <b>p2 = 7.005 </b> for our new strut
+length, and then followed through with the problem as before. </p>
+
+<center>
+<table>
+	 <tr>
+		<th>Theta</th>
+		<th>X</th>
+		<th>Y</th>
+		<th>Plot</th>
+	</tr>
+	<tr>
+		<th>-0.6587</th>
+		<th>-4.3488</th>
+		<th>2.4673</th>
+		<th><img width=560 src="figure1part5"></th>
+	</tr>
+	<tr>
+		<th>-0.3813</th>
+		<th>-4.7809</th>
+		<th>1.4637</th>
+		<th><img width=560 src="figure2part5"><th>
+	</tr>
+	<tr>
+		<th>0.0481</th>
+		<th>-4.9488</th>
+		<th>0.7134</th>
+		<th><img width=560 src="figure3part5"></th>
+	</tr>
+	<tr>
+		<th>0.4603</th>
+		<th>-0.8223</th>
+		<th>4.9319</th>
+		<th><img width=560 src="figure4part5"></th>
+	</tr>
+	<tr>
+		<th>0.9775</th>
+		<th>2.2955</th>
+		<th>4.4419</th>
+		<th><img width=560 src="figure5part5"></th>
+	</tr>
+	<tr>
+		<th>2.5144</th>
+		<th>3.2114</th>
+		<th>3.8324</th>
+		<th><img width=560 src="figure6part5"></th>
+	</tr>
+</table>
+</center>
+<br><br>
+
+<h2> Part VI </h2>
+<p> Once more we repeat the process in part 4 and part 5 but this time we 
+look for parameters that gives us only 2 roots and 2 poses. To accomplsih this we used
+<b> P2 = 9</b> for our flexible strut and that produced two poses. </p>
+<center>
+<table border="1" style="width:50%">
+	 <tr>
+		<th>Theta</th>
+		<th>X</th>
+		<th>Y</th>
+		<th>Plot</th>
+	</tr>
+	<tr>
+		<th>1.5479</th>
+		<th>0.7100</th>
+		<th>4.9493</th>
+		<th><img width=560 src="figure1part6"></th>
+	</tr>
+	<tr>
+		<th>2.2989</th>
+		<th>1.3916</th>
+		<th>4.8024</th>
+		<th><img width=560 src="figure2part6"></th>
+	</tr>
+</table>
+</center>
+
+
+</html>
+

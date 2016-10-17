@@ -1,0 +1,579 @@
+<html>
+
+<title> GPS Conditioning</title>
+<a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style2.css">
+</head>
+<script type="text/javascript" 
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	
+
+
+<h1> GPS Conditioning</h1>
+<div class = "contents">
+<ul class = "links"> 
+<li class = "links"> <a href = #intro>Introduction</a>
+<li class = "links"> <a href = #part1>Part 1</a>
+<li class = "links"> <a href = #part2>Part 2</a>
+<li class = "links"> <a href = #part3>Part 3</a>
+</ul>
+</div>
+<hr color>
+
+
+
+
+<div>
+<a NAME = "intro">
+<h2> Introduction </h2> 
+
+</div>
+
+<div align = center>
+
+
+<p> There are 24 GPS satellites orbiting Earth whose purpose is to send carefully timed signals to receivers, 
+which use the timestamp of the signal and the speed of light \(c = 299792.458\) km/s to determine the distance to the satellite.
+ The exact \((x,y,z)\) position of the receiver can be determined using a minimum of three satellites, 
+ and is modeled by the intersection of three spheres, whose radii \(r_1, r_2, r_2\) correspond to the
+distances between the receiver and the satellite. 
+<br> 
+
+
+
+<center><img src = "spheres.png" height = 300, width = 350>
+<br>
+<font style = "bold" size = 1 color = navy>Figure 1: Intersection of 3 Spheres Modeling Receiver Position</font>
+
+
+<p>Although a minimum of 3 satellites is required for a position,
+ 4 satellites must be used to obtain an accurate position. GPS satellites use expensive atomic clocks with precision to the 
+ nanosecond, whereas receivers have relatively low accuracy. We can model this by accounting for the difference in time between
+ the satellite clock and receiver clock \(d\), which yields the following equations:</p>
+<p>
+\begin{eqnarray*}
+r_1^2 = (x - A_1)^2 + (y-B_1)^2 + (z-C_1)^2 - c^2(t_1 -d)^2 = 0 \\
+r_2^2 = (x - A_2)^2 + (y-B_2)^2 + (z-C_2)^2 - c^2(t_2 -d)^2 = 0 \\
+r_3^2 = (x - A_3)^2 + (y-B_3)^2 + (z-C_3)^2 - c^2(t_3 -d)^2 = 0 \\
+r_4^2 = (x - A_4)^2 + (y-B_4)^2 + (z-C_4)^2 - c^2(t_4 -d)^2 = 0 \\
+\end{eqnarray*}
+</p>
+<p>These equations allow us to determine the \((x,y,z)\) location as well as the correct time.
+As this is a system of 4 quadratic equations in 4 variables, we expect two intersection points.
+One of these points, however, can be disregarded as it will typically be located outside of the Earth's atmosphere. </p>
+</div>
+<hr color>
+
+<a NAME = "part1">
+<h2> Part I </h2>
+
+<div align = "center">
+<ul class = "links"> 
+<li class = "links"> <a href = "F.m">Function Code</a>
+<li class = "links"> <a href = "DF.m">Jacobian Code</a>
+<li class = "links"> <a href = "MultiVarNewt.m">Newton's Method Code</a>
+</ul>
+</div>
+
+
+<p> We began by solving the system for the receiver positions by using multivariate Newton's Method.</p>
+<p> Given a system of \(n\) nonlinear equations: 
+			$$\vec{F} = \begin{bmatrix}f_1\\f_2\\\vdots\\f_n \end{bmatrix}$$
+  	we can derive Newton's Method by keeping the first order terms of the 
+	Taylor expansion, which yields: $$\vec{F}(\vec{x}) \approx \vec{F}(\vec{x_0}) + D(\vec{x_0})(\vec{x} - \vec{x_0}),$$
+	where \(D(\vec{x_0})\) is the Jacobian matrix of first partial derivatives evaluated at the point \(\vec{x_0}\).</p>
+<p> To solve \(\vec{F} = 0\) for \(\vec{x}\), we let \(\vec{s}\) be the solution to \(D(\vec{x_0})\vec{s} = -\vec{F}(\vec{x_0})\), then 
+let \(\vec{x} = \vec{s} + \vec{x_0}\).</p>
+
+<div class = "data" align = center>
+
+<font style = "bold" size = 1 color = navy>Table 1: Satellite and Receiver Positions</font>
+<table>
+<tr>
+<th><h3> Satellite 1 Position <br> \((x,y,z,t_1)\)</h3></th>
+<th><h3> Satellite 2 Position <br> \((x,y,z,t_2)\)</h3></th>
+<th><h3> Satellite 3 Position <br> \((x,y,z,t_3)\)</h3></th>
+<th><h3> Satellite 4 Position <br> \((x,y,z,t_4)\)</h3></th>
+<th><h3> Receiver Position <br> \((x,y,z,d)\)</h3></th>
+</tr>
+<tr>
+<td align = center>	\((15600,7540,20140,.07074)\)</td>
+<td align = center> \((18760,2750,18610,.07220)\)</td>
+<td align = center> \((17610,14630,13480,.07690)\)</td>
+<td align = center> \((19170,610,18390,.07242)\)</td>
+
+<td align = center>\((-41.77271,-16.78919,6370.05956,-0.0032016)\)</td>
+
+
+</tr>
+</table>
+
+</div>
+<br><br>
+<div align = center>
+
+<img src = "plotpoints.png" height = 500 width = 600>
+<center><font style = "bold" size = 1 color = navy>Figure 2: Satellite and Receiver Positions</font></center>
+</div>
+	
+
+
+<hr color>
+<a NAME = "part2">
+<h2> Part II </h2> 
+<div>
+<center>
+<ul class = "links"> 
+<li class = "links"> <a href = "quad.m"> Quadratic Formula Code</a>
+
+<center>
+</ul>
+</div>
+ <div>
+ 
+
+
+<p> In this section we used the quadratic formula to determine the solution of the system</p>
+<p> Expanding the quadratic equations above, we obtain the system: 
+\begin{align*}
+ x^2 - 2xA_1 + {A_1}^2 + y^2 - 2yB_1 + {B_1}^2 + z^2 - 2zC_1 + {C_1}^2 = c^2{t_1}^2 - 2{c_1}^2t_1d + c^2d^2\\
+ x^2 - 2xA_2 + {A_2}^2 + y^2 - 2yB_2 + {B_2}^2 + z^2 - 2zC_2 + {C_2}^2 = c^2{t_2}^2 - 2{c_2}^2t_2d + c^2d^2\\
+ x^2 - 2xA_3 + {A_1}^2 + y^2 - 2yB_3 + {B_1}^2 + z^2 - 2zC_3 + {C_3}^2 = c^2{t_3}^2 - 2{c_3}^2t_3d + c^2d^2\\
+ x^2 - 2xA_4 + {A_1}^2 + y^2 - 2yB_4 + {B_1}^2 + z^2 - 2zC_4 + {C_4}^2 = c^2{t_4}^2 - 2{c_4}^2t_4d + c^2d^2\\
+ \end{align*}
+ If we subtract the last three equations from the first, we obtain a system of three linear equations in 4 variables: 
+ 
+ \begin{align*}
+ x(-2A_1+2A_2)+y(-2B_1+2B_2)+z(-2C_1+2C_2)+d(2c^2t_1-2c^2t_2)=A_1^2-A_2^2+B_1^2-B_2^2+C_1^2+C_2^2-c^2t_1^2+c^2t_2^2\\
+ x(-2A_1+2A_3)+y(-2B_1+2B_3)+z(-2C_1+2C_3)+d(2c^2t_1-2c^2t_3)=A_1^2-A_3^2+B_1^2-B_3^2+C_1^2+C_3^2-c^2t_1^2+c^2t_3^2\\
+ x(-2A_1+2A_4)+y(-2B_1+2B_4)+z(-2C_1+2C_4)+d(2c^2t_1-2c^2t_4)=A_1^2-A_4^2+B_1^2-B_4^2+C_1^2+C_4^2-c^2t_1^2+c^2t_4^2\\
+ \end{align*}
+ 
+ Or rather, the system
+ \begin{align*}
+ x\begin{bmatrix}
+ (-2(A_1 - A_2) \\ 
+ (-2(A_1 - A_3) \\ 
+ (-2(A_1 - A_4) \\
+ \end{bmatrix}
+ +
+ y\begin{bmatrix}
+ (-2(B_1 - B_2) \\ 
+ (-2(B_1 - B_3) \\ 
+ (-2(B_1 - B_4) \\
+ \end{bmatrix}
+ +
+ z\begin{bmatrix}
+ (-2(C_1 - C_2) \\ 
+ (-2(C_1 - C_3) \\ 
+ (-2(C_1 - C_4) \\
+ \end{bmatrix}
+ +
+ d\begin{bmatrix}
+ 2c^2(t_1-t_2) \\ 
+ 2c^2(t_1-t_3) \\ 
+ 2c^2(t_1-t_4) \\
+ \end{bmatrix}
+ 
+ +
+ \begin{bmatrix}
+ (A_1^2-A_2^2)+ (B_1^2 - B_2^2) + (C_1^2 - C_2^2) + c^2(t_1^2 - t_2^2) \\ 
+ (A_1^2-A_3^2)+ (B_1^2 - B_3^2) + (C_1^2 - C_3^2) + c^2(t_1^2 - t_3^2) \\ 
+ (A_1^2-A_4^2)+ (B_1^2 - B_4^2) + (C_1^2 - C_4^2) + c^2(t_1^2 - t_4^2) \\
+ \end{bmatrix}
+ =
+ 
+ \vec{0},
+ 
+ \end{align*}
+ 
+which we will write as $$ xu_x + yu_y + zu_z + du_d + w = \vec{0}$$
+
+Note that since determinants are linear in their columns, we can set up
+the following determinant equation to solve for each variable in terms of \(d\).
+
+$$ det[u_x|u_y|xu_x + yu_y + zu_z + du_d + w] = 0,$$ Noting that the determinant of a 
+matrix with the zero vector as a column must be zero. By the linearity of the columns, we can write:
+$$  det[u_x|u_y|xu_x + yu_y + zu_z + du_d + w] = det[xu_x|y_x|xu_x] + det[u_x|y_x|yu_y] + 
+	d(det[u_x|u_y|u_d]) + det[u_x|y_x|u_w]= 0.
+$$
+
+Since determinants of matrices with repeated columns are zero, we can solve for \(z\) in terms of 
+d by: 
+$$
+z = -d\frac{det[u_x|u_y|u_d]}{det[|u_x|u_y|u_z]} - \frac{det[u_x|u_y|w]}{det[u_x|u_y|u_z]}.$$
+Similarly, we can solve for \(x\) and \(y\) by 
+$$
+y = -d\frac{det[u_x|u_z|u_d]}{det[|u_x|u_z|u_y]} - \frac{det[u_x|u_z|w]}{det[u_x|u_z|u_y]}\\
+x = -d\frac{det[u_y|u_z|u_d]}{det[|u_y|u_z|u_x]} - \frac{det[u_y|u_z|w]}{det[u_y|u_z|u_x]}.
+$$
+
+If we make the variable substitution for each equation
+$$
+x = -dk_1 - j_1;
+y = -dk_2 - j_2;
+z = -dk_3 - j_3;
+$$
+and substitute back into the first equation, we get the following quadratic equation in terms of d:
+
+$$
+d^2(k_1^2 + k_2^2 + k_3^2 - c^2) + d(2k_1j_1 + 2k_1A_1 + 2k_2j_2 + 2k_2B_1 + 2k_3j_3 + 2k_3C_3 + 2c^2t_1) + (j_1^2 + j_2^2 + j_3^2 + 2j_1A_1 + 2j_2B_1 + 2j_3C_1 + A_1^2 + B_1^2 + C_1^2) = 0
+$$
+ </p>
+
+<div class = "data" align = center>
+
+<table>
+<tr>
+<th></th>
+<th><h3> Near Earth Solution </h3></th>
+<th><h3> Away From Earth Solution </h3></th>
+</tr>
+<tr>
+<th>\(x\)</th>
+<td align = center> \(-41.7727095708374\)</td>
+<td align = center> \(-39.7478373481429 \)</td>
+<tr>
+<th>\(y\)</th>
+<td align = center> \(-16.7891941065255\)</td>
+<td align = center> \(-134.274144360664\)</td>
+</tr>
+<tr>
+<th>\(z\)</th>
+<td align = center> \(6370.05955922334\)</td>
+<td align = center> \(-9413.62455373575\)</td>
+</tr>
+<tr>
+<th>\(d\)</th>
+<td align = center> \(-0.00320156582959414\)</td>
+<td align = center> \(0.185173047095946\)</td>
+
+</tr>
+</table>
+
+</div>
+ 
+</div>
+
+
+<hr color>
+
+<div>
+<a NAME = "part3"></a>
+<h2> Part III: Error Handling</h2>
+</div>
+<div align = "center">
+<ul class = "links"> 
+<li class = "links"> <a href = "H.m">Function Code</a>
+<li class = "links"> <a href = "DH.m">Jacobian Code</a>
+<li class = "links"> <a href = "MultiVarNewt2.m">Newton's Method Code</a>
+<li class = "links"> <a href = "runner.m"> Runner Code</a>
+</ul>
+</div>
+
+
+<p>In this section we explore the conditioning of the GPS problem, or rather, how capable we are of obtaining
+accurate results</p> 
+<p>
+First we define satellite positions \((A_i, B_i, C_i)\) in spherical coordinates by:
+</p>
+
+<div class = "equation" align = center>
+<p>
+$$
+A_i = \rho cos(\phi_i)cos(\theta_i)\\
+B_i = \rho cos(\phi_i)sin(\theta_i)\\
+C_i = \rho^2 sin(\phi_i)
+$$
+</p>
+</div>
+<p> Where \(\rho\) is a fixed constant 26570km. The azimuthal and radial angles are chosen randomly such that 
+	\(0 \leq \phi_i \leq \frac{\pi}{2}\) and \(0\leq \theta_i \leq 2\pi\).
+	 We set \(x = 0, y = 0, z = 6370, d =.0001\). Setting adequately spaced out angles, we calculated the ranges \(R_i\) between the 
+	 the satellites and the receiver. We then randomly added error to the transmission times, which are given by \(t_i = R_i/c + d\).
+	 The change in input distance is the given by the the speed of light times the maximum change in transmission time. The output error is the 
+	 change in the \((x,y,z)\) coordinates due to this change. The error magnification factor is given by:
+	 $$
+	 \frac{|\Delta x,\Delta y,\Delta z|_\infty}{c|\Delta t_1.....\Delta t_n|_\infty}$$
+	 
+	 </p>
+	 <p> The following parameters were used to have adequately spaced out satellites:
+		\(\rho = 26570km\) \(\theta_1 = 0\)  \(\theta_2 = \frac{\pi}{2}\)  \(\theta_3 = \pi\) \(\theta_4 = \frac{3\pi}{4}\) <br>
+	 \(\phi_1 = \frac{\pi}{4}\) \(\phi_2 = \frac{3\pi}{4}\)  \(\phi_3 = \frac{\pi}{4}\)  \(\phi_4 = 2\frac{\pi}{3}\). Note that while \(\phi\) values are increasing 
+	
+	</p>
+	<p> The following data shows the EMF values and maximum position errors for various additions and subtractions of \(10^{-8}\) for \((t_1,t_2,t_3,t_4)\)
+	</p>
+	<div class = data align = center>
+	<table>
+  <tr>
+    <th>(\(\Delta t_1,\Delta t_2, \Delta t_3, \Delta t_4)\)</th>
+    <th>EMF</th>
+    <th>Max Position Error</th>
+  </tr>
+  <tr>
+    <td>(+ + + +)</td>
+    <td>0.0333597451607689</td>
+    <td>0.000100010000000005</td>
+  </tr>
+  <tr>
+    <td>(+ + + -)</td>
+    <td>0.483468268595617</td>
+    <td>0.00144940140607284</td>
+  </tr>
+  <tr>
+    <td>(+ + - +)</td>
+    <td>1.57623527166359</td>
+    <td>0.00472543446478325</td>
+  </tr>
+  <tr>
+    <td>(+ + - -)</td>
+    <td>2.05970377091601</td>
+    <td>0.00617483656234781</td>
+  </tr>
+  <tr>
+    <td>(+ - + +)</td>
+    <td>0.0333586978463021</td>
+    <td>0.000100006860230222</td>
+  </tr>
+  <tr>
+    <td>(+ - + -)</td>
+    <td>0.0333556988487522</td>
+    <td>9.99978694617519e-05</td>
+  </tr>
+  <tr>
+    <td>(+ - -  +)</td>
+    <td>1.21305361692902</td>
+    <td>0.00363664325504942</td>
+  </tr>
+  <tr>
+    <td>(+ - - -)</td>
+    <td>0.31397681319916</td>
+    <td>0.000941278805839829</td>
+  </tr>
+  <tr>
+    <td>(- + + +)</td>
+    <td>2.22854082290726</td>
+    <td>0.00668099731052709</td>
+  </tr>
+  <tr>
+    <td>(- + + -)</td>
+    <td>1.74507280901819</td>
+    <td>0.00523159666804528</td>
+  </tr>
+  <tr>
+    <td>(- + - +)</td>
+    <td>1.7450727084463</td>
+    <td>0.00523159636653834</td>
+  </tr>
+  <tr>
+    <td>(- + - -)</td>
+    <td>2.22854123982011</td>
+    <td>0.00668099856040037</td>
+  </tr>
+  <tr>
+    <td>(- - + +)</td>
+    <td>2.05970354866426</td>
+    <td>0.0061748358960538</td>
+  </tr>
+  <tr>
+    <td>(- - + -)</td>
+    <td>1.57623550270228</td>
+    <td>0.00472543515741982</td>
+  </tr>
+  <tr>
+    <td>(- - - +)</td>
+    <td>0.899076897776044</td>
+    <td>0.00269536473115295</td>
+  </tr>
+  <tr>
+    <td>(- - - -)</td>
+    <td>0.033353073878867</td>
+    <td>9.99900000000112e-05</td>
+  </tr>
+</table>
+	<div class = "data" align = center>
+	 
+</div>
+
+<p> In this case, the maximum position error found was approximately \(.66m\), and the condition number 
+	is approximately \(2.2\).</p>
+	
+	
+	
+	
+	
+<hr class = fancy>
+<h2> Part 4: Closely Bunched Satellites</h2>
+
+<p> In this section, we test the case where all the satellites are tightly bunched together, or rather
+when \(\phi\) and \(\theta\) for all satellites are within \(5%\) of one another. The following parameters were used
+in this situation: \(\rho = 27570km\) \(\theta_1 = \frac{\pi}{2}\)  \(\theta_2 = \frac{\pi}{2} + .00785\)  \(\theta_3 = \frac{\pi}{2} - .00785\) \(\theta_4 = \frac{\pi}{2} +.00393\) <br>
+	 \(\phi_1 = \frac{\pi}{2}\)  \(\phi_2 = \frac{\pi}{2} + .0087\)  \(\phi_3 = \frac{\pi}{2} + .00393\)  \(\phi_4 = \frac{\pi}{2} - .00785\). The following results were obtained for 5 and 8 satellites:</p>
+	 	
+	 <div class = "data" align = center>
+	 <table>
+  <tr>
+    <th>(\(\Delta t_1,\Delta t_2, \Delta t_3, \Delta t_4)\)</th>
+    <th>EMF</th>
+    <th>Max Position Error</th>
+  </tr>
+  <tr>
+    <td>(+ + + +)</td>
+    <td>3.50940908614821e-05</td>
+    <td>1.05*10^-7</td>
+  </tr>
+  <tr>
+    <td>(+ + + -)</td>
+    <td>20065.8159271887</td>
+    <td>60.1558027858746</td>
+  </tr>
+  <tr>
+    <td>(+ + - +)</td>
+    <td>26321.2492113054</td>
+    <td>78.9091199868781</td>
+  </tr>
+  <tr>
+    <td>(+ + - -)</td>
+    <td>30103.0259174933</td>
+    <td>90.2466013304302</td>
+  </tr>
+  <tr>
+    <td>(+ - + +)</td>
+    <td>15043.2541481489</td>
+    <td>45.0985413739227</td>
+  </tr>
+  <tr>
+    <td>(+ - + -)</td>
+    <td>35200.0653563796</td>
+    <td>105.527141149497</td>
+  </tr>
+  <tr>
+    <td>(+ - -  +)</td>
+    <td>25077.7053034118</td>
+    <td>75.1810691390947</td>
+  </tr>
+  <tr>
+    <td>(+ - - -)</td>
+    <td>45291.5587319742</td>
+    <td>135.780677189099</td>
+  </tr>
+  <tr>
+    <td>(- + + +)</td>
+    <td>44704.3914210453</td>
+    <td>134.020393875093</td>
+  </tr>
+  <tr>
+    <td>(- + + -)</td>
+    <td>24901.9349130821</td>
+    <td>74.6541227654889</td>
+  </tr>
+  <tr>
+    <td>(- + - +)</td>
+    <td>34837.6328165917</td>
+    <td>104.440595729875</td>
+  </tr>
+  <tr>
+    <td>(- + - -)</td>
+    <td>14979.8395850742</td>
+    <td>44.9084292965508</td>
+  </tr>
+  <tr>
+    <td>(- - + +)</td>
+    <td>29867.2711342984</td>
+    <td>89.5398262710378</td>
+  </tr>
+  <tr>
+    <td>(- - + -)</td>
+    <td>26243.4163233152</td>
+    <td>78.67578285884</td>
+  </tr>
+  <tr>
+    <td>(- - - +)</td>
+    <td>19947.4005577895</td>
+    <td>59.800802439303</td>
+  </tr>
+  <tr>
+    <td>(- - - -)</td>
+    <td>1.64347218098278e-05</td>
+    <td>4.92700564791448e-08</td>
+  </tr>
+</table>
+</div>
+<p> As we can see, we obtained a maximum position error of 135.780677189099 and an EMF of 
+45291.5587319742. These values are far higher than those of the spaced out satellites, showing
+that the GPS problem is poorly conditioned for closely bunched satellites.</p>
+
+
+<hr color>
+
+<h2> Part 6: Adding Satellites</h2>
+
+<p> In this section we see the effect on the EMF and condition number of adding more satellites to an equally spaced out situation. To do this, we generalized
+the code to allow inputs for any number of satellites  </p>
+
+
+  <table style="display: inline-table;"> 
+   <TR>
+   <TH>EMF</TH>
+      <TH>Maximum Position Error(km)</TH>
+       </TR>
+      <TR>
+      <TD>0.454642361673915</TD>
+      <TD>0.00136298351117148 </TD>
+   </TR>
+   <TR>
+      <TD>0.454640837215659  </TD>
+      <TD>0.0013629789409606</TD>
+   </TR>
+   <TR>
+      <TD>1.07716885934356 </TD>
+      <TD>0.00322927100023662</TD>
+   </TR>
+   <TR>
+      <TD>1.6791372738387 </TD>
+      <TD>0.00503392690643523</TD>
+   </TR>
+    <TR>
+      <TD>2.26262720983026</TD>
+      <TD>0.00678318572772696</TD>
+   </TR>
+    <TR>
+      <TD>1.07716875376914  </TD>
+      <TD>0.00322927068373247</TD>
+   </TR>
+         <TD>1.67913749044829  </TD>
+      <TD>0.00503392755581444</TD>
+   </TR>
+   <TR>
+      <TD>2.26262792609811  </TD>
+      <TD>0.00678318787504395</TD>
+   </TR>
+   <TR>
+      <TD>1.01407200254759</TD>
+      <TD>0.00304011138232723</TD>
+   </TR>
+   <TR>
+      <TD>1.01407221473167</TD>
+      <TD> 0.00304011201843911</TD>
+   </TR>
+    <TR>
+      <TD>1.66065920246407 </TD>
+      <TD>0.00497853104207024</TD>
+   </TR>
+    <TR>
+      <TD>1.09305422133056   </TD>
+      <TD>0.00327689411739965</TD>
+   </TR>
+   </table>
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 

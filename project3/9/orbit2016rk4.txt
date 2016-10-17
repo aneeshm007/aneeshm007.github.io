@@ -1,0 +1,69 @@
+type orbit2016rk4
+
+%Program 6.4 Plotting program for one-body problem 
+% Inputs: time interval inter, initial conditions
+% ic = [x0 vx0 y0 vy0], x position, x velocity, y pos, y vel,
+% number of steps n, steps per point plotted p
+% Calls a one-step method such as trapstep.m
+% Example usage: orbit2016rk4([0 100],[2 .2 2 -.2 0 0],[0 -.02 0 .02 0 0],10000,5,.03,.3)
+function fun=orbit2016rk4(inter,ic1,ic2,n,p,m1,m2)
+m1=m1;m2=m2;
+
+h=(inter(2)-inter(1))/n;        % plot n points 
+xx0=ic1(1);vxx0=ic1(2);yx0=ic1(3);vxy0=ic1(4);zx0=ic1(5);vxz0=ic1(6);   % grab initial conds
+xa0=ic2(1);vax0=ic2(2);ya0=ic2(3);vay0=ic2(4);za0=ic2(5);vaz0=ic2(6);
+y(1,:)=[xx0 vxx0 yx0 vxy0 zx0 vxz0 xa0 vax0 ya0 vay0 za0 vaz0];t(1)=inter(1);    % build y vector
+set(gca,'XLim',[-5 5],'YLim',[-5 5],'ZLim',[-5 5],...
+    'XTick',[-5 0 5],'YTick',[-5 0 5],'ZTick',[-5 0 5]);
+plot3(0,0,0);
+body1=animatedline(ic1(1),ic1(3),ic1(5),'color','r','Marker','.','markersize',30);
+tail1=animatedline(ic1(1),ic1(3),ic1(5),'color','r','LineStyle','-');
+body2=animatedline(ic2(1),ic2(3),ic2(5),'color','b','Marker','.','markersize',30);
+tail2=animatedline(ic2(1),ic2(3),ic2(5),'color','b','LineStyle','-');
+%[px,py]=ginput(1);                % include these three lines
+%[px1,py1]=ginput(1);              % to enable mouse support
+%y(1,:)=[px px1-px py py1-py];     % 2 clicks set direction
+for k=1:n/p
+  for i=1:p
+    t(i+1)=t(i)+h;
+    y(i+1,:)=rk4(t(i),y(i,:),h,m1,m2);
+  end
+  y(1,:)=y(p+1,:);t(1)=t(p+1);
+  clearpoints(body1);addpoints(body1,y(1,1),y(1,3),y(1,5))
+  addpoints(tail1,y(1,1),y(1,3),y(1,5)) 
+  clearpoints(body2);addpoints(body2,y(1,7),y(1,9),y(1,11))
+  addpoints(tail2,y(1,7),y(1,9),y(1,11))
+  drawnow;
+  axis([-5 5 -5 5 -5 5])
+end
+function y=rk4(t,x,h,m1,m2)
+%one step of the rk4 method
+s1=ydot1(t,x,m1,m2);
+s2=ydot1(t+h/2,x+h*s1/2,m1,m2);
+s3=ydot1(t+h/2,x+h*s2/2,m1,m2);
+s4=ydot1(t+h,x+h*s3,m1,m2);
+y=x+(h/6)*(s1+2*s2+2*s3+s4);
+
+function y = ydot1(t,x,m1,m2)
+m2=m2;g=1;mg2=m2*g;
+m1=m1;g=1;mg1=m1*g;
+px1=x(1);py1=x(3);vx1=x(2);vy1=x(4); pz1=x(5); vz1=x(6);
+px2=x(7);py2=x(9);vx2=x(8);vy2=x(10);pz2=x(11);vz2=x(12);
+
+dist=sqrt((pz2-pz1)^2+(px2-px1)^2+(py2-py1)^2);
+y=zeros(1,12);
+y(1)=vx1;
+y(2)=(mg2*(px2-px1))/(dist^3);
+y(3)=vy1;
+y(4)=(mg2*(py2-py1))/(dist^3);
+y(5)=vz1;
+y(6)=(mg2*(pz2-pz1))/(dist^3);
+y(7)=vx2;
+y(8)=(mg1*(px1-px2))/(dist^3);
+y(9)=vy2;
+y(10)=(mg1*(py1-py2))/(dist^3);
+y(11)=vz2;
+y(12)=(mg1*(pz1-pz2))/(dist^3);
+orbit2016rk4([0 100],[2 .2 2 -.2 0 0],[0 -.02 0 .02 0 0],10000,5,.03,.3)
+orbit2016rk4([0 100],[2 .2 2 -.2 0 .2],[0 -.02 0 .02 0 0],10000,5,.03,.3)
+diary off

@@ -1,0 +1,80 @@
+<html>
+
+<title> Orbital Mechanics</title>
+ <a href = "../index.html"> <-  Back to home </a>
+<head>
+<link rel="stylesheet" href="style3.css">
+</head>
+<script type="text/javascript" 
+	
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+	</script>
+	
+
+
+<h1>Project 3  Orbital Mechanics Modeling</h1>
+<hr class = fancy>
+
+<center><video width="320" controls
+source src="figure8.mp4" type="video/mp4"><p>
+</video></center>
+
+
+
+<div>
+<h2> Introduction and Part 1 </h2>
+</div>
+
+<div align = center>
+
+
+ <p> Orbital Mechanics involves the force interactions between large 
+bodies of mass, governed by the equation
+	$$\vec{F} = G\frac{m_1m_2}{|\vec{r}|^3}\vec{r}$$</p>
+<br> 
+<br>
+<p> 
+We then applied this equation to a 3 dimensional two body problem. This 
+yielded the differential equation system, where the mass of the first body 
+is \(m_1\) and the mass of the second body is \(m_2\).
+\begin{eqnarray*} 
+d&=&\sqrt{(z_2-z_1)^2+(x_2-x_1)^2+(y_2-y_1)^2}\\
+x_1'&=&v_{x_1}\\
+v_{x_1}'&=&\dfrac{m_2g(x_2-x_1)}{d^3}\\
+y_1'&=&v_{y_1}\\
+v_{y_1}'&=&\dfrac{m_2g(y_2-y_1)}{d^3}\\
+z_1'&=&v_{z_1}\\
+v_{z_1}'&=&\dfrac{m_2g(z_2-z_1)}{d^3}\\
+x_2'&=&v_{x_2}\\
+v_{x_2}'&=&\dfrac{m_1g(x_1-x_2)}{d^3}\\
+y_2'&=&v_{y_2}\\
+v_{y_2}'&=&\dfrac{m_1g(y_1-y_2)}{d^3}\\
+z_2'&=&v_{z_1}\\
+v_{z_2}'&=&\dfrac{m_1g(z_1-z_2)}{d^3}\\
+\end{eqnarray*}
+We then used the Runge Kutta 4th order method to numerically solve for 
+solutions to the differential equation system using given initial 
+conditions. Our code is <a href="orbit2016rk4.txt">here</a>.
+<br>
+<br>
+For our first initial conditions, we had the initial position of body 1 to 
+be \(\vec{r_1}=(2,2,0)\) and body 1's initial velocity was 
+\(\vec{v_1}=(.2,-.2,0)\). Body 2's initial position and initial velocity 
+was \(\vec{r_2}=(0,0,0)\) and \(\vec{v_2}=(-.02,.02,0)\). The mass of 
+body 1 was \(m_1=.03\), and the mass of body 2 was \(m_2=3\). With body 1 
+in red 
+and body 2 in blue, the resulting orbit was:
+<center><video width="320" controls
+source src="project3part21.mp4" type="video/mp4"><p>
+</video></center>
+</p>
+<br>
+<p> We then applied our code to some new initial conditions, which were 
+the same except for the initial velocity of body 1, which was 
+\(\vec{v_1}=(.2,-.2,.2)\). The resulting orbit was:
+<center><video width="320" controls
+source src="project3part22.mp4" type="video/mp4"><p>
+</video></center>
+
+
+
