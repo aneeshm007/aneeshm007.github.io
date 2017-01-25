@@ -1,0 +1,8 @@
+xk = cos( pi * (0:11)/4)
+
+% The different values of cosine are different multiples of ?/4 
+% xk(1) is the first element of the vector
+
+% Loops 
+
+
