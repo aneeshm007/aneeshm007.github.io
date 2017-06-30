@@ -1,4 +1,4 @@
-
+ 
 hr {
     border: 0;
     height: 1px;
@@ -62,10 +62,6 @@ p{
 	
 }
 
-#equation {
-    text-align: left;
-    color: navy;
-    font-size: 80%
 
 }
 a:link {
@@ -136,7 +132,6 @@ text-align: center ;
 table.contents {
     border-collapse: collapse;
 
-
 }
 
 table.contents, th.contents, td.contents {
@@ -146,18 +141,6 @@ table.contents, th.contents, td.contents {
 	
 }
 
-.data{
-
-}
-
-div.data{
-margin-left: auto;
-margin-right: auto;
-
-
-}
-
-
 li.links {
 	display: inline;
 }
@@ -166,16 +149,3 @@ ul.links {
 padding: 10;
 }
 
-
-div.links{
-
-margin-left: auto;
-margin-right: auto;
-}
-
-div.equation{
-margin-left: auto;
-margin-right: auto;
-text-align: center;
-width: 500;
-}
